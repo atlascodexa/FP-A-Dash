@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FP&A Executive Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .dark-mode { background-color: #0f172a; color: #f8fafc; }
+        .card-dark { background-color: #1e293b; border-color: #334155; }
+    </style>
+</head>
+<body class="dark-mode min-h-screen pb-10">
+
+    <header class="border-b border-slate-700 p-4 sticky top-0 bg-[#0f172a] z-50">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <div class="flex items-center gap-3">
+                <div class="bg-blue-600 p-2 rounded-lg font-bold">FP</div>
+                <h1 class="text-xl font-bold">Executive Board <span class="text-xs font-normal text-slate-400">| 2026</span></h1>
+            </div>
+            <div class="text-sm text-slate-400">Moeda: BRL (R$)</div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto p-4 space-y-8">
+        <section class="bg-gradient-to-r from-blue-900 to-slate-800 p-6 rounded-2xl shadow-xl">
+            <h2 class="text-xl font-bold mb-2 flex items-center gap-2">✨ Insights de IA</h2>
+            <p class="text-blue-100">A margem EBITDA reduziu 1,8 p.p. devido ao aumento de custos logísticos. Recomenda-se revisão da malha de distribuição.</p>
+        </section>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="card-dark p-6 rounded-xl border">
+                <p class="text-slate-400 text-sm">RECEITA LÍQUIDA</p>
+                <p class="text-2xl font-bold text-white">R$ 12.500.000</p>
+                <p class="text-green-400 text-xs">+5.4% vs Orçado</p>
+            </div>
+            <div class="card-dark p-6 rounded-xl border">
+                <p class="text-slate-400 text-sm">EBITDA</p>
+                <p class="text-2xl font-bold text-white">R$ 3.200.000</p>
+                <p class="text-green-400 text-xs">+10.3% vs Orçado</p>
+            </div>
+            <div class="card-dark p-6 rounded-xl border">
+                <p class="text-slate-400 text-sm">MARGEM EBITDA</p>
+                <p class="text-2xl font-bold text-white">25,6%</p>
+                <p class="text-red-400 text-xs">-1.2% vs Mês Ant.</p>
+            </div>
+        </div>
+
+        <div class="card-dark p-6 rounded-xl border">
+            <h3 class="font-bold mb-4">Performance Mensal (Real vs Orçado)</h3>
+            <canvas id="mainChart" height="100"></canvas>
+        </div>
+    </main>
+
+    <script>
+        // Inicialização do Gráfico
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                datasets: [{
+                    label: 'Realizado',
+                    data: [980, 1050, 1100, 1080, 1250, 1300],
+                    backgroundColor: '#3b82f6'
+                }, {
+                    label: 'Orçado',
+                    data: [1000, 1020, 1050, 1100, 1150, 1200],
+                    backgroundColor: 'rgba(148, 163, 184, 0.2)'
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { labels: { color: '#fff' } } },
+                scales: { 
+                    y: { ticks: { color: '#94a3b8' } },
+                    x: { ticks: { color: '#94a3b8' } }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
