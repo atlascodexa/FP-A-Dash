@@ -212,24 +212,27 @@
         let baseReceita = 0, baseEbitda = 0, baseCustosOpex = 0;
 
         function updateDashboard() {
-            // 1. LER INPUTS
-            const vBruta = Number(document.getElementById('inpReceita').value);
-            const vDed = Number(document.getElementById('inpDeducoes').value);
-            const vCustos = Number(document.getElementById('inpCustos').value);
-            const vOpex = Number(document.getElementById('inpOpex').value);
-            const vDA = Number(document.getElementById('inpDA').value);
-            const vFin = Number(document.getElementById('inpFin').value); // Pode ser negativo
-            const vIr = Number(document.getElementById('inpImpostos').value);
-            const vCapex = Number(document.getElementById('inpCapex').value);
-            const vCaixa = Number(document.getElementById('inpCaixa').value);
-            const vDiv = Number(document.getElementById('inpDivida').value);
+            // 1. LER INPUTS COM MATH.ABS() PARA EVITAR DUPLO NEGATIVO (EXCETO RESULTADO FINANCEIRO)
+            const vBruta = Number(document.getElementById('inpReceita').value) || 0;
+            const vDed = Math.abs(Number(document.getElementById('inpDeducoes').value) || 0);
+            const vCustos = Math.abs(Number(document.getElementById('inpCustos').value) || 0);
+            const vOpex = Math.abs(Number(document.getElementById('inpOpex').value) || 0);
+            const vDA = Math.abs(Number(document.getElementById('inpDA').value) || 0);
+            
+            // Resultado Financeiro NÃO tem Math.abs() pois pode ser receita (+) ou despesa (-)
+            const vFin = Number(document.getElementById('inpFin').value) || 0; 
+            
+            const vIr = Math.abs(Number(document.getElementById('inpImpostos').value) || 0);
+            const vCapex = Math.abs(Number(document.getElementById('inpCapex').value) || 0);
+            const vCaixa = Math.abs(Number(document.getElementById('inpCaixa').value) || 0);
+            const vDiv = Math.abs(Number(document.getElementById('inpDivida').value) || 0);
 
-            // 2. MATEMÁTICA FP&A
+            // 2. MATEMÁTICA FP&A (Agora a prova de erros de sinal)
             const vLiquida = vBruta - vDed;
             const vBruto = vLiquida - vCustos;
             const vEbitda = vBruto - vOpex;
             const vEbit = vEbitda - vDA;
-            const vLair = vEbit + vFin; // vFin já deve vir negativo se for despesa
+            const vLair = vEbit + vFin; // vFin preserva o sinal que o usuário digitou
             const vLiquido = vLair - vIr;
             
             const vFcf = vEbitda - vCapex;
