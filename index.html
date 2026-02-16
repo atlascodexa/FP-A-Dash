@@ -3,352 +3,386 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Plataforma FP&A Intelligence v4.0</title>
+    <title>Plataforma FP&A Intelligence v5.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
     <style>
         body { background-color: #0b0f1a; color: #e2e8f0; font-family: 'Inter', sans-serif; }
-        .glass-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); }
+        .glass-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.05); backdrop-filter: blur(12px); box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5); }
         .negative { color: #f87171; }
         .positive { color: #4ade80; }
-        .input-fpa { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(59, 130, 246, 0.3); color: #fff; border-radius: 0.5rem; padding: 0.5rem; width: 100%; outline: none; transition: all 0.2s; }
-        .input-fpa:focus { border-color: #3b82f6; box-shadow: 0 0 10px rgba(59, 130, 246, 0.2); }
+        .input-fpa { background: rgba(15, 23, 42, 0.9); border: 1px solid rgba(59, 130, 246, 0.4); color: #fff; border-radius: 0.5rem; padding: 0.6rem; width: 100%; outline: none; transition: all 0.3s ease; font-family: 'Courier New', Courier, monospace; font-weight: bold; }
+        .input-fpa:focus { border-color: #60a5fa; box-shadow: 0 0 12px rgba(96, 165, 250, 0.3); transform: translateY(-1px); }
+        .chart-container { position: relative; height: 320px; width: 100%; }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: #0b0f1a; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3b82f6; }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="p-4 md:p-6">
 
-    <header class="max-w-7xl mx-auto mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+    <header class="max-w-[1400px] mx-auto mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
         <div>
-            <h1 class="text-3xl font-extrabold tracking-tight text-white flex items-center gap-2">
-                <i class="ri-dashboard-3-line text-blue-500"></i> FP&A Executive Dashboard
+            <h1 class="text-3xl font-black tracking-tight text-white flex items-center gap-3">
+                <i class="ri-bar-chart-box-line text-blue-500"></i> FP&A Executive Board
             </h1>
-            <p class="text-slate-400">Análise Consolidada | Cenário: <span class="text-blue-400 font-bold">Interativo (Real Time)</span></p>
+            <p class="text-slate-400 mt-1">Visão 360º de Performance | <span class="text-blue-400 font-bold">Simulação em Tempo Real</span></p>
         </div>
         <div class="flex gap-3">
-            <div class="glass-card px-4 py-2 rounded-lg text-sm border-blue-500/30 border">
-                <span class="text-slate-400 block text-[10px] uppercase font-bold">Status</span>
-                <span class="text-green-400 flex items-center gap-1"><i class="ri-checkbox-circle-line"></i> Dinâmico</span>
+            <div class="glass-card px-4 py-2 rounded-lg text-sm border-blue-500/50 border shadow-[0_0_15px_rgba(59,130,246,0.2)]">
+                <span class="text-slate-400 block text-[10px] uppercase font-bold tracking-widest">Motor de Cálculo</span>
+                <span class="text-green-400 font-bold flex items-center gap-1"><i class="ri-pulse-line animate-pulse"></i> Online & Estável</span>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto space-y-6">
+    <main class="max-w-[1400px] mx-auto space-y-6">
 
-        <section class="glass-card p-6 rounded-2xl border border-blue-500/30">
-            <h3 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <i class="ri-keyboard-line text-blue-400"></i> Inserção de Premissas Financeiras (Em R$)
+        <section class="glass-card p-6 rounded-2xl border-l-4 border-l-blue-600">
+            <h3 class="text-lg font-bold text-white mb-5 flex items-center gap-2">
+                <i class="ri-equalizer-fill text-blue-400"></i> Premissas de Modelagem Financeira (R$)
             </h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
-                <div>
-                    <label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">Receita Bruta</label>
-                    <input type="number" id="inpReceita" class="input-fpa" value="15000000" oninput="updateDashboard()">
-                </div>
-                <div>
-                    <label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">Impostos/Deduções</label>
-                    <input type="number" id="inpDeducoes" class="input-fpa" value="2500000" oninput="updateDashboard()">
-                </div>
-                <div>
-                    <label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">Custos (CPV/CSV)</label>
-                    <input type="number" id="inpCustos" class="input-fpa" value="6000000" oninput="updateDashboard()">
-                </div>
-                <div>
-                    <label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">Desp. Operac. (OPEX)</label>
-                    <input type="number" id="inpOpex" class="input-fpa" value="3300000" oninput="updateDashboard()">
-                </div>
-                <div>
-                    <label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">Caixa e Equiv.</label>
-                    <input type="number" id="inpCaixa" class="input-fpa" value="1500000" oninput="updateDashboard()">
-                </div>
-                <div>
-                    <label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">Dívida Bruta</label>
-                    <input type="number" id="inpDivida" class="input-fpa" value="4060000" oninput="updateDashboard()">
-                </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <div><label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">Receita Bruta</label><input type="number" id="inpReceita" class="input-fpa text-blue-300" value="25000000" oninput="updateDashboard()"></div>
+                <div><label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">(-) Deduções/Impostos</label><input type="number" id="inpDeducoes" class="input-fpa text-red-300" value="3500000" oninput="updateDashboard()"></div>
+                <div><label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">(-) Custos (CPV/CSV)</label><input type="number" id="inpCustos" class="input-fpa text-red-300" value="8000000" oninput="updateDashboard()"></div>
+                <div><label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">(-) OPEX (Caixa)</label><input type="number" id="inpOpex" class="input-fpa text-red-300" value="5500000" oninput="updateDashboard()"></div>
+                <div><label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">(-) D&A (Depreciação)</label><input type="number" id="inpDA" class="input-fpa text-yellow-300" value="1200000" oninput="updateDashboard()"></div>
+                <div><label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">(+/-) Res. Financeiro Líq.</label><input type="number" id="inpFin" class="input-fpa text-slate-300" value="-800000" oninput="updateDashboard()" title="Use negativo para despesa líquida"></div>
+                <div><label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">(-) Provisão IR/CSLL</label><input type="number" id="inpImpostos" class="input-fpa text-red-300" value="1500000" oninput="updateDashboard()"></div>
+                <div><label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">CAPEX (Investimentos)</label><input type="number" id="inpCapex" class="input-fpa text-purple-300" value="2000000" oninput="updateDashboard()"></div>
+                <div><label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">Caixa e Equivalentes</label><input type="number" id="inpCaixa" class="input-fpa text-green-300" value="4500000" oninput="updateDashboard()"></div>
+                <div><label class="text-[10px] text-slate-400 uppercase font-bold mb-1 block">Dívida Bruta</label><input type="number" id="inpDivida" class="input-fpa text-orange-300" value="12000000" oninput="updateDashboard()"></div>
             </div>
         </section>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div class="glass-card p-5 rounded-2xl">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-slate-400 text-xs font-bold uppercase tracking-widest">Receita Líquida</span>
-                    <i class="ri-arrow-right-up-line positive"></i>
-                </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div class="glass-card p-5 rounded-xl hover:bg-slate-800/50 transition-colors">
+                <div class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Receita Líquida</div>
                 <div class="text-2xl font-black text-white" id="cardReceitaLiq">R$ 0</div>
-                <div class="text-[10px] mt-1 italic text-slate-500">Base para análises de margem</div>
+                <div class="text-[10px] mt-2 text-slate-500">Base DRE (Top Line)</div>
             </div>
-            <div class="glass-card p-5 rounded-2xl border-l-4 border-l-blue-500">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-slate-400 text-xs font-bold uppercase tracking-widest">EBITDA Ajustado</span>
-                    <i class="ri-pulse-line text-blue-400"></i>
-                </div>
-                <div class="text-2xl font-black text-white" id="cardEbitda">R$ 0</div>
-                <div class="text-[10px] mt-1 text-blue-400 font-bold" id="cardMargemEbitda">Margem: 0%</div>
+            <div class="glass-card p-5 rounded-xl border-t-2 border-blue-500 bg-blue-900/10">
+                <div class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 flex justify-between">EBITDA <i class="ri-flashlight-fill text-blue-400"></i></div>
+                <div class="text-2xl font-black text-blue-400" id="cardEbitda">R$ 0</div>
+                <div class="text-xs mt-2 font-bold bg-blue-500/20 text-blue-300 px-2 py-1 rounded inline-block" id="cardMargemEbitda">0% Mg</div>
             </div>
-            <div class="glass-card p-5 rounded-2xl">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-slate-400 text-xs font-bold uppercase tracking-widest">Dívida Líquida</span>
-                    <i class="ri-scales-3-line text-purple-400"></i>
-                </div>
-                <div class="text-2xl font-black text-white" id="cardDividaLiq">R$ 0</div>
-                <div class="text-[10px] mt-1 text-slate-400 font-bold">Dívida Bruta (-) Caixa</div>
+            <div class="glass-card p-5 rounded-xl border-t-2 border-green-500 bg-green-900/10">
+                <div class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2 flex justify-between">Lucro Líquido <i class="ri-money-dollar-circle-fill text-green-400"></i></div>
+                <div class="text-2xl font-black text-green-400" id="cardLucroLiq">R$ 0</div>
+                <div class="text-xs mt-2 font-bold bg-green-500/20 text-green-300 px-2 py-1 rounded inline-block" id="cardMargemLiq">0% Mg</div>
             </div>
-            <div class="glass-card p-5 rounded-2xl">
-                <div class="flex justify-between items-start mb-2">
-                    <span class="text-slate-400 text-xs font-bold uppercase tracking-widest">Alavancagem</span>
-                    <i class="ri-alarm-warning-line text-slate-400"></i>
-                </div>
+            <div class="glass-card p-5 rounded-xl">
+                <div class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Free Cash Flow</div>
+                <div class="text-2xl font-black text-white" id="cardFCF">R$ 0</div>
+                <div class="text-[10px] mt-2 text-slate-500">EBITDA (-) CAPEX</div>
+            </div>
+            <div class="glass-card p-5 rounded-xl">
+                <div class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Alavancagem</div>
                 <div class="text-2xl font-black text-white" id="cardAlavancagem">0.0x</div>
-                <div class="text-[10px] mt-1 text-slate-500 font-bold">Dív. Líquida / EBITDA</div>
+                <div class="text-[10px] mt-2 text-slate-500">Dívida Líq / EBITDA</div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                        <i class="ri-water-flash-fill text-blue-500"></i> DRE Waterfall (Ponte de Valor)
+                    </h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartWaterfall"></canvas>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 rounded-2xl">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2">
+                        <i class="ri-line-chart-fill text-purple-500"></i> Análise de Margens vs Estrutura
+                    </h3>
+                </div>
+                <div class="chart-container">
+                    <canvas id="chartMargins"></canvas>
+                </div>
             </div>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div class="lg:col-span-2 glass-card p-6 rounded-2xl">
-                <h3 class="text-lg font-bold mb-6 flex items-center gap-2 text-white">
-                    <i class="ri-line-chart-line text-blue-500"></i> Evolução da Receita Líquida (Projeção Anual)
-                </h3>
-                <canvas id="chartTrend" height="150"></canvas>
-            </div>
-            <div class="glass-card p-6 rounded-2xl">
-                <h3 class="text-lg font-bold mb-6 flex items-center gap-2 text-white">
-                    <i class="ri-pie-chart-line text-purple-500"></i> Composição de Custos e Despesas
-                </h3>
-                <canvas id="chartMix" height="250"></canvas>
-            </div>
-        </div>
-
-        <section class="glass-card rounded-2xl overflow-hidden">
-            <div class="p-6 border-b border-slate-700 bg-slate-800/50">
-                <h3 class="text-lg font-bold text-white">Demonstrativo de Resultados (DRE) - Visão Gerencial</h3>
-            </div>
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead class="bg-slate-900/50 text-[10px] uppercase text-slate-500">
-                        <tr>
-                            <th class="p-4">Conta Financeira</th>
-                            <th class="p-4">Realizado (R$)</th>
-                            <th class="p-4">Análise Vertical (AV)</th>
-                        </tr>
-                    </thead>
-                    <tbody class="text-sm text-slate-300 divide-y divide-slate-800">
-                        <tr>
-                            <td class="p-4 font-bold text-white">Receita Bruta</td>
-                            <td class="p-4" id="dreBruta">0</td>
-                            <td class="p-4">-</td>
-                        </tr>
-                        <tr class="bg-slate-800/20">
-                            <td class="p-4 pl-8 italic text-slate-500">(-) Impostos e Deduções</td>
-                            <td class="p-4 text-red-400" id="dreDeducoes">0</td>
-                            <td class="p-4 text-slate-500" id="avDeducoes">0%</td>
-                        </tr>
-                        <tr>
-                            <td class="p-4 font-bold text-blue-400 uppercase">Receita Líquida</td>
-                            <td class="p-4 text-blue-400 font-bold" id="dreLiquida">0</td>
-                            <td class="p-4 text-blue-400 font-bold">100% (Base)</td>
-                        </tr>
-                        <tr class="bg-slate-800/20">
-                            <td class="p-4 pl-8 italic text-slate-500">(-) Custos (CPV/CSV)</td>
-                            <td class="p-4 text-red-400" id="dreCustos">0</td>
-                            <td class="p-4 text-slate-500" id="avCustos">0%</td>
-                        </tr>
-                        <tr>
-                            <td class="p-4 font-bold text-white">Lucro Bruto</td>
-                            <td class="p-4 text-white font-bold" id="dreLucroBruto">0</td>
-                            <td class="p-4 text-white" id="avLucroBruto">0%</td>
-                        </tr>
-                        <tr class="bg-slate-800/20">
-                            <td class="p-4 pl-8 italic text-slate-500">(-) Despesas Operacionais (OPEX)</td>
-                            <td class="p-4 text-red-400" id="dreOpex">0</td>
-                            <td class="p-4 text-slate-500" id="avOpex">0%</td>
-                        </tr>
-                        <tr>
-                            <td class="p-4 font-bold text-white text-lg">EBITDA</td>
-                            <td class="p-4 text-white font-bold text-lg" id="dreEbitda">0</td>
-                            <td class="p-4 text-green-400 font-bold" id="avEbitda">0%</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </section>
-
-        <section class="bg-blue-900/20 border border-blue-500/30 p-8 rounded-2xl">
-            <h3 class="text-xl font-bold mb-4 text-white flex items-center gap-2">
-                <i class="ri-equalizer-line text-blue-400"></i> Simulador de Cenários Estratégicos (What-If)
-            </h3>
             
-            <p class="text-sm text-slate-300 mb-8 max-w-3xl leading-relaxed">
-                <strong class="text-white">Para que serve esta análise?</strong> O simulador abaixo avalia a resiliência do seu modelo de negócio. Ao mover o controle deslizante, você projeta variações na sua <strong class="text-blue-400">Receita Líquida atual</strong>. Através do conceito de <em>Alavancagem Operacional</em> (onde custos fixos não sobem na mesma proporção das vendas), o sistema calcula o impacto direto na geração de caixa (EBITDA). Descubra rapidamente como uma queda nas vendas pode comprometer sua margem, ou como um aumento impulsiona os lucros.
-            </p>
+            <section class="glass-card rounded-2xl overflow-hidden lg:col-span-2">
+                <div class="p-4 border-b border-slate-700 bg-slate-800/80">
+                    <h3 class="text-sm font-bold text-white uppercase tracking-widest">Demonstrativo de Resultados (Visão FP&A)</h3>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="bg-slate-900/80 text-[10px] uppercase text-slate-400">
+                            <tr>
+                                <th class="p-3 pl-6">Conta Gerencial</th>
+                                <th class="p-3 text-right">Valor (R$)</th>
+                                <th class="p-3 text-right pr-6">Análise Vert.</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-xs text-slate-300 divide-y divide-slate-800/50 font-mono">
+                            <tr class="hover:bg-slate-800/30">
+                                <td class="p-3 pl-6 text-white">Receita Bruta</td><td class="p-3 text-right" id="tdBruta">0</td><td class="p-3 text-right pr-6">-</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 text-red-400">
+                                <td class="p-3 pl-8">(-) Deduções</td><td class="p-3 text-right" id="tdDed">0</td><td class="p-3 text-right pr-6" id="avDed">0%</td>
+                            </tr>
+                            <tr class="bg-blue-900/10 font-bold text-blue-300 text-sm">
+                                <td class="p-3 pl-6">= Receita Líquida</td><td class="p-3 text-right" id="tdLiq">0</td><td class="p-3 text-right pr-6">100%</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 text-red-400">
+                                <td class="p-3 pl-8">(-) Custos (CPV)</td><td class="p-3 text-right" id="tdCusto">0</td><td class="p-3 text-right pr-6" id="avCusto">0%</td>
+                            </tr>
+                            <tr class="font-bold text-slate-200">
+                                <td class="p-3 pl-6">= Lucro Bruto</td><td class="p-3 text-right" id="tdBruto">0</td><td class="p-3 text-right pr-6" id="avBruto">0%</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 text-red-400">
+                                <td class="p-3 pl-8">(-) OPEX (Desp. Caixa)</td><td class="p-3 text-right" id="tdOpex">0</td><td class="p-3 text-right pr-6" id="avOpex">0%</td>
+                            </tr>
+                            <tr class="bg-slate-800 font-bold text-white text-sm">
+                                <td class="p-3 pl-6">= EBITDA</td><td class="p-3 text-right text-blue-400" id="tdEbitda">0</td><td class="p-3 text-right text-blue-400 pr-6" id="avEbitda">0%</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 text-yellow-500">
+                                <td class="p-3 pl-8">(-) Depreciação/Amortização</td><td class="p-3 text-right" id="tdDA">0</td><td class="p-3 text-right pr-6" id="avDA">0%</td>
+                            </tr>
+                            <tr class="font-bold text-slate-200">
+                                <td class="p-3 pl-6">= EBIT (Lucro Operacional)</td><td class="p-3 text-right" id="tdEbit">0</td><td class="p-3 text-right pr-6" id="avEbit">0%</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 text-slate-400">
+                                <td class="p-3 pl-8">(+/-) Resultado Financeiro</td><td class="p-3 text-right" id="tdFin">0</td><td class="p-3 text-right pr-6" id="avFin">0%</td>
+                            </tr>
+                            <tr class="font-bold text-slate-200">
+                                <td class="p-3 pl-6">= LAIR (Lucro Antes IR)</td><td class="p-3 text-right" id="tdLair">0</td><td class="p-3 text-right pr-6" id="avLair">0%</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/30 text-red-400">
+                                <td class="p-3 pl-8">(-) IR / CSLL</td><td class="p-3 text-right" id="tdIr">0</td><td class="p-3 text-right pr-6" id="avIr">0%</td>
+                            </tr>
+                            <tr class="bg-green-900/20 font-black text-green-400 text-sm">
+                                <td class="p-3 pl-6">= LUCRO LÍQUIDO</td><td class="p-3 text-right" id="tdLiquido">0</td><td class="p-3 text-right pr-6" id="avLiquido">0%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-                <div class="space-y-6">
-                    <div>
-                        <label class="block text-sm font-bold text-slate-400 mb-2">Simular Variação na Receita Líquida (%)</label>
-                        <input type="range" min="-30" max="30" value="0" id="rangeRev" class="w-full accent-blue-500" oninput="calculateWhatIf()">
-                        <div class="flex justify-between text-[10px] mt-1 text-slate-500 uppercase font-black">
-                            <span>-30% (Pessimista)</span>
-                            <span id="sliderLabel" class="text-blue-400 text-sm">0%</span>
-                            <span>+30% (Otimista)</span>
-                        </div>
+            <section class="glass-card p-6 rounded-2xl flex flex-col justify-between">
+                <div>
+                    <h3 class="text-sm font-bold text-white uppercase tracking-widest mb-4 flex items-center gap-2">
+                        <i class="ri-test-tube-fill text-purple-400"></i> Teste de Estresse (Receita)
+                    </h3>
+                    <p class="text-xs text-slate-400 mb-6 leading-relaxed">
+                        Avalie o impacto imediato na geração de caixa (EBITDA). Assumimos 70% de custos fixos no curto prazo.
+                    </p>
+                    
+                    <label class="block text-xs font-bold text-slate-300 mb-2">Choque na Receita Líquida (%)</label>
+                    <input type="range" min="-40" max="40" value="0" id="rangeRev" class="w-full accent-purple-500" oninput="calculateWhatIf()">
+                    <div class="flex justify-between text-[10px] mt-2 text-slate-500 uppercase font-black">
+                        <span>-40%</span>
+                        <span id="sliderLabel" class="text-purple-400 text-sm px-2 bg-purple-500/10 rounded">0%</span>
+                        <span>+40%</span>
                     </div>
                 </div>
-                <div class="bg-slate-900/50 p-6 rounded-xl border border-blue-500/20">
-                    <div class="text-xs text-slate-500 font-bold uppercase mb-4">Impacto Projetado no EBITDA</div>
-                    <div class="text-4xl font-black text-white" id="whatifEbitda">R$ 0</div>
-                    <div class="mt-4 flex justify-between items-center text-xs">
-                        <span class="text-slate-400">Nova Margem Projetada:</span>
-                        <span class="text-blue-400 font-bold" id="whatifMargem">0%</span>
+
+                <div class="mt-8 bg-slate-900/80 p-5 rounded-xl border border-slate-700">
+                    <div class="text-[10px] text-slate-500 font-bold uppercase mb-2">Novo EBITDA Projetado</div>
+                    <div class="text-3xl font-black text-white font-mono" id="whatifEbitda">R$ 0</div>
+                    <div class="mt-3 flex justify-between items-center text-xs border-t border-slate-800 pt-3">
+                        <span class="text-slate-400">Nova Margem:</span>
+                        <span class="font-bold px-2 py-1 rounded bg-slate-800" id="whatifMargem">0%</span>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
+
+        </div>
 
     </main>
 
-    <footer class="max-w-7xl mx-auto mt-12 mb-8 text-center text-slate-600 text-[10px] uppercase tracking-tighter">
-        FP&A Intelligence Platform | Governança de Dados Ativa | Dinâmico
-    </footer>
-
     <script>
-        // Variáveis globais para os gráficos
-        let chartTrendObj, chartMixObj;
-        let globalEbitda = 0;
-        let globalReceitaLiq = 0;
-        let globalCustosOpex = 0; // Para manter o What-if fiel
+        // Formatação de Moeda
+        const formatBRL = (v) => new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(v || 0);
+        
+        // Globais para Gráficos e Simulador
+        let chartWaterfall, chartMargins;
+        let baseReceita = 0, baseEbitda = 0, baseCustosOpex = 0;
 
-        // Formatador de Moeda
-        const formatBRL = (valor) => {
-            return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL', maximumFractionDigits: 0 }).format(valor);
-        };
-
-        // Função Principal de Cálculo e Atualização
         function updateDashboard() {
-            // 1. Coletar Inputs
-            const vBruta = Number(document.getElementById('inpReceita').value) || 0;
-            const vDed = Number(document.getElementById('inpDeducoes').value) || 0;
-            const vCustos = Number(document.getElementById('inpCustos').value) || 0;
-            const vOpex = Number(document.getElementById('inpOpex').value) || 0;
-            const vCaixa = Number(document.getElementById('inpCaixa').value) || 0;
-            const vDivBruta = Number(document.getElementById('inpDivida').value) || 0;
+            // 1. LER INPUTS
+            const vBruta = Number(document.getElementById('inpReceita').value);
+            const vDed = Number(document.getElementById('inpDeducoes').value);
+            const vCustos = Number(document.getElementById('inpCustos').value);
+            const vOpex = Number(document.getElementById('inpOpex').value);
+            const vDA = Number(document.getElementById('inpDA').value);
+            const vFin = Number(document.getElementById('inpFin').value); // Pode ser negativo
+            const vIr = Number(document.getElementById('inpImpostos').value);
+            const vCapex = Number(document.getElementById('inpCapex').value);
+            const vCaixa = Number(document.getElementById('inpCaixa').value);
+            const vDiv = Number(document.getElementById('inpDivida').value);
 
-            // 2. Cálculos FP&A
+            // 2. MATEMÁTICA FP&A
             const vLiquida = vBruta - vDed;
-            const vLucroBruto = vLiquida - vCustos;
-            const vEbitda = vLucroBruto - vOpex;
-            const vDivLiquida = vDivBruta - vCaixa;
+            const vBruto = vLiquida - vCustos;
+            const vEbitda = vBruto - vOpex;
+            const vEbit = vEbitda - vDA;
+            const vLair = vEbit + vFin; // vFin já deve vir negativo se for despesa
+            const vLiquido = vLair - vIr;
             
-            let vMargemEbitda = vLiquida > 0 ? (vEbitda / vLiquida) * 100 : 0;
-            let vAlavancagem = vEbitda > 0 ? (vDivLiquida / vEbitda) : 0;
+            const vFcf = vEbitda - vCapex;
+            const vDivLiq = vDiv - vCaixa;
+            
+            const mgEbitda = vLiquida > 0 ? (vEbitda / vLiquida) * 100 : 0;
+            const mgLiq = vLiquida > 0 ? (vLiquido / vLiquida) * 100 : 0;
+            const alavancagem = vEbitda > 0 ? (vDivLiq / vEbitda) : 0;
 
-            // Salvar para o What-If
-            globalEbitda = vEbitda;
-            globalReceitaLiq = vLiquida;
-            globalCustosOpex = vCustos + vOpex;
+            // Salvar para o simulador
+            baseReceita = vLiquida;
+            baseEbitda = vEbitda;
+            baseCustosOpex = vCustos + vOpex;
 
-            // 3. Atualizar Cards Superiores
+            // 3. ATUALIZAR CARDS SUPERIORES
             document.getElementById('cardReceitaLiq').innerText = formatBRL(vLiquida);
             document.getElementById('cardEbitda').innerText = formatBRL(vEbitda);
-            document.getElementById('cardMargemEbitda').innerText = `Margem: ${vMargemEbitda.toFixed(1)}%`;
-            document.getElementById('cardDividaLiq').innerText = formatBRL(vDivLiquida);
-            document.getElementById('cardAlavancagem').innerText = `${vAlavancagem.toFixed(2)}x`;
-
-            // Cor da Alavancagem (Se > 2.5 fica vermelho)
-            document.getElementById('cardAlavancagem').className = `text-2xl font-black ${vAlavancagem > 2.5 ? 'text-red-400' : 'text-white'}`;
-
-            // 4. Atualizar Tabela DRE
-            const av = (val) => vLiquida > 0 ? ((val / vLiquida) * 100).toFixed(1) + '%' : '0%';
-
-            document.getElementById('dreBruta').innerText = formatBRL(vBruta);
-            document.getElementById('dreDeducoes').innerText = `(${formatBRL(vDed)})`;
-            document.getElementById('avDeducoes').innerText = av(vDed);
+            document.getElementById('cardMargemEbitda').innerText = `${mgEbitda.toFixed(1)}% Mg`;
+            document.getElementById('cardLucroLiq').innerText = formatBRL(vLiquido);
+            document.getElementById('cardMargemLiq').innerText = `${mgLiq.toFixed(1)}% Mg`;
+            document.getElementById('cardFCF').innerText = formatBRL(vFcf);
             
-            document.getElementById('dreLiquida').innerText = formatBRL(vLiquida);
-            
-            document.getElementById('dreCustos').innerText = `(${formatBRL(vCustos)})`;
-            document.getElementById('avCustos').innerText = av(vCustos);
-            
-            document.getElementById('dreLucroBruto').innerText = formatBRL(vLucroBruto);
-            document.getElementById('avLucroBruto').innerText = av(vLucroBruto);
-            
-            document.getElementById('dreOpex').innerText = `(${formatBRL(vOpex)})`;
-            document.getElementById('avOpex').innerText = av(vOpex);
-            
-            document.getElementById('dreEbitda').innerText = formatBRL(vEbitda);
-            document.getElementById('avEbitda').innerText = av(vEbitda);
+            const elAlav = document.getElementById('cardAlavancagem');
+            elAlav.innerText = `${alavancagem.toFixed(2)}x`;
+            elAlav.className = `text-2xl font-black ${alavancagem > 2.5 ? 'text-red-400' : 'text-white'}`;
 
-            // 5. Atualizar Gráficos
-            updateCharts(vLiquida, vCustos, vOpex);
+            // 4. ATUALIZAR TABELA DRE
+            const av = (val) => vLiquida > 0 ? ((Math.abs(val) / vLiquida) * 100).toFixed(1) + '%' : '0%';
 
-            // 6. Atualizar Simulador What-If
+            document.getElementById('tdBruta').innerText = formatBRL(vBruta);
+            document.getElementById('tdDed').innerText = `(${formatBRL(vDed)})`; document.getElementById('avDed').innerText = av(vDed);
+            document.getElementById('tdLiq').innerText = formatBRL(vLiquida);
+            document.getElementById('tdCusto').innerText = `(${formatBRL(vCustos)})`; document.getElementById('avCusto').innerText = av(vCustos);
+            document.getElementById('tdBruto').innerText = formatBRL(vBruto); document.getElementById('avBruto').innerText = av(vBruto);
+            document.getElementById('tdOpex').innerText = `(${formatBRL(vOpex)})`; document.getElementById('avOpex').innerText = av(vOpex);
+            document.getElementById('tdEbitda').innerText = formatBRL(vEbitda); document.getElementById('avEbitda').innerText = av(vEbitda);
+            document.getElementById('tdDA').innerText = `(${formatBRL(vDA)})`; document.getElementById('avDA').innerText = av(vDA);
+            document.getElementById('tdEbit').innerText = formatBRL(vEbit); document.getElementById('avEbit').innerText = av(vEbit);
+            document.getElementById('tdFin').innerText = formatBRL(vFin); document.getElementById('avFin').innerText = av(vFin);
+            document.getElementById('tdLair').innerText = formatBRL(vLair); document.getElementById('avLair').innerText = av(vLair);
+            document.getElementById('tdIr').innerText = `(${formatBRL(vIr)})`; document.getElementById('avIr').innerText = av(vIr);
+            document.getElementById('tdLiquido').innerText = formatBRL(vLiquido); document.getElementById('avLiquido').innerText = av(vLiquido);
+
+            // 5. ATUALIZAR GRÁFICOS
+            updateCharts(vBruta, vDed, vLiquida, vCustos, vBruto, vOpex, vEbitda, vDA, vEbit, vLiquido, vFcf);
             calculateWhatIf();
         }
 
+        // SIMULADOR
         function calculateWhatIf() {
             const variacao = Number(document.getElementById('rangeRev').value);
             document.getElementById('sliderLabel').innerText = variacao > 0 ? `+${variacao}%` : `${variacao}%`;
 
-            // Cálculo simplificado de Alavancagem Operacional: 
-            // Assumimos que Custos+OPEX são 70% fixos e 30% variáveis com a receita.
-            const novaReceita = globalReceitaLiq * (1 + (variacao / 100));
-            const custosVariaveisAtuais = globalCustosOpex * 0.3;
-            const custosFixos = globalCustosOpex * 0.7;
-            
-            const novosCustosVariaveis = custosVariaveisAtuais * (1 + (variacao / 100));
-            const novoEbitda = novaReceita - (custosFixos + novosCustosVariaveis);
+            const novaReceita = baseReceita * (1 + (variacao / 100));
+            // 70% custo fixo, 30% varia com a receita
+            const CV = baseCustosOpex * 0.3;
+            const CF = baseCustosOpex * 0.7;
+            const novoCV = CV * (1 + (variacao / 100));
+            const novoEbitda = novaReceita - (CF + novoCV);
             
             const novaMargem = novaReceita > 0 ? (novoEbitda / novaReceita) * 100 : 0;
+            const margemBase = baseReceita > 0 ? (baseEbitda / baseReceita) * 100 : 0;
 
             document.getElementById('whatifEbitda').innerText = formatBRL(novoEbitda);
             
             const elMargem = document.getElementById('whatifMargem');
             elMargem.innerText = `${novaMargem.toFixed(1)}%`;
-            elMargem.className = `font-bold ${novaMargem > (globalEbitda/globalReceitaLiq*100) ? 'text-green-400' : 'text-red-400'}`;
+            if (novaMargem > margemBase) {
+                elMargem.className = "font-bold px-2 py-1 rounded bg-green-900/30 text-green-400";
+            } else if (novaMargem < margemBase) {
+                elMargem.className = "font-bold px-2 py-1 rounded bg-red-900/30 text-red-400";
+            } else {
+                elMargem.className = "font-bold px-2 py-1 rounded bg-slate-800 text-slate-300";
+            }
         }
 
+        // INICIALIZAÇÃO DOS GRÁFICOS (Chart.js Avançado)
         function initCharts() {
-            const ctxTrend = document.getElementById('chartTrend').getContext('2d');
-            chartTrendObj = new Chart(ctxTrend, {
+            // Configurações Globais do Chart.js para o modo Dark
+            Chart.defaults.color = '#94a3b8';
+            Chart.defaults.font.family = "'Inter', sans-serif";
+
+            // 1. Gráfico Cascata (Usando Floating Bars)
+            const ctxWater = document.getElementById('chartWaterfall').getContext('2d');
+            chartWaterfall = new Chart(ctxWater, {
                 type: 'bar',
                 data: {
-                    labels: ['T1', 'T2', 'T3', 'T4 (Proj)'],
-                    datasets: [{ 
-                        label: 'Receita Líquida (Trimestral)', 
-                        data: [0,0,0,0], 
-                        backgroundColor: 'rgba(59, 130, 246, 0.8)',
-                        borderRadius: 4
+                    labels: ['Rec. Bruta', 'Deduções', 'Rec. Líquida', 'CPV', 'L. Bruto', 'OPEX', 'EBITDA'],
+                    datasets: [{
+                        label: 'DRE Bridge',
+                        data: [], // Será preenchido na atualização
+                        backgroundColor: (ctx) => {
+                            const index = ctx.dataIndex;
+                            // Cores: Bruta(Azul), Líquida/Bruto/EBITDA(Azul Claro), Redutores(Vermelho)
+                            if ([0, 2, 4, 6].includes(index)) return 'rgba(59, 130, 246, 0.8)';
+                            return 'rgba(248, 113, 113, 0.8)';
+                        },
+                        borderRadius: 4,
+                        borderSkipped: false
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { labels: { color: '#94a3b8' } } }, scales: { y: { grid: { color: '#1e293b' }, ticks: { color: '#64748b' } }, x: { grid: { display: false }, ticks: { color: '#64748b' } } } }
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false }, tooltip: { callbacks: { label: (c) => formatBRL(c.raw[1] - c.raw[0] || c.raw[1]) } } },
+                    scales: { y: { grid: { color: '#1e293b' } }, x: { grid: { display: false } } }
+                }
             });
 
-            const ctxMix = document.getElementById('chartMix').getContext('2d');
-            chartMixObj = new Chart(ctxMix, {
-                type: 'doughnut',
+            // 2. Gráfico de Estrutura (Doughnut ou Radar - vamos usar um Bar horizontal empilhado para estrutura)
+            const ctxMargins = document.getElementById('chartMargins').getContext('2d');
+            chartMargins = new Chart(ctxMargins, {
+                type: 'bar',
                 data: {
-                    labels: ['Custos (CPV)', 'OPEX', 'EBITDA (Margem)'],
-                    datasets: [{ data: [0, 0, 0], backgroundColor: ['#f87171', '#fbbf24', '#4ade80'], borderWidth: 0 }]
+                    labels: ['Análise de Geração de Valor'],
+                    datasets: [
+                        { label: 'Lucro Líquido', data: [], backgroundColor: '#4ade80' },
+                        { label: 'Impostos/Juros/D&A', data: [], backgroundColor: '#fbbf24' },
+                        { label: 'OPEX', data: [], backgroundColor: '#f87171' },
+                        { label: 'Custos (CPV)', data: [], backgroundColor: '#ef4444' }
+                    ]
                 },
-                options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8', boxWidth: 10 } } } }
+                options: {
+                    indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } },
+                    scales: { x: { stacked: true, grid: { color: '#1e293b' } }, y: { stacked: true, grid: { display: false } } }
+                }
             });
         }
 
-        function updateCharts(liquida, custos, opex) {
-            // Divide a receita em 4 trimestres apenas para ilustrar o gráfico
-            const t1 = liquida * 0.22;
-            const t2 = liquida * 0.24;
-            const t3 = liquida * 0.26;
-            const t4 = liquida * 0.28;
-            
-            chartTrendObj.data.datasets[0].data = [t1, t2, t3, t4];
-            chartTrendObj.update();
+        function updateCharts(bruta, ded, liq, custo, bruto, opex, ebitda, da, ebit, liquido, fcf) {
+            // Lógica do Waterfall (Arrays [min, max])
+            chartWaterfall.data.datasets[0].data = [
+                [0, bruta],                   // Bruta
+                [liq, bruta],                 // Deduções (Cai da bruta pra liquida)
+                [0, liq],                     // Líquida
+                [bruto, liq],                 // CPV (Cai da liquida pro bruto)
+                [0, bruto],                   // Lucro Bruto
+                [ebitda, bruto],              // OPEX (Cai do bruto pro ebitda)
+                [0, ebitda]                   // EBITDA
+            ];
+            chartWaterfall.update();
 
-            // Atualiza Mix de Custos vs Geração de Caixa
-            const ebitda = liquida - custos - opex;
-            chartMixObj.data.datasets[0].data = [custos, opex, ebitda > 0 ? ebitda : 0];
-            chartMixObj.update();
+            // Lógica de Composição da Receita Líquida (Empilhado até 100% da Líquida)
+            // Tudo que diminui a receita líquida até chegar no lucro líquido
+            const diferencaNãoOperacional = ebitda - liquido; // Juros, Impostos, DA
+            
+            chartMargins.data.datasets[0].data = [liquido > 0 ? liquido : 0]; // Base: Lucro
+            chartMargins.data.datasets[1].data = [diferencaNãoOperacional > 0 ? diferencaNãoOperacional : 0];
+            chartMargins.data.datasets[2].data = [opex];
+            chartMargins.data.datasets[3].data = [custo];
+            chartMargins.update();
         }
 
-        // Inicializar na primeira carga
         window.onload = () => {
             initCharts();
             updateDashboard();
